@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Study Timer</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 500px;
+      margin: 50px auto;
+      padding: 20px;
+      text-align: center;
+    }
+
+    #timer {
+      font-size: 64px;
+      font-weight: bold;
+      margin: 30px 0;
+    }
+
+    button {
+      padding: 12px 18px;
+      margin: 5px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    #status {
+      margin: 20px 0;
+      color: #666;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>Study Timer</h1>
+
+  <div id="timer">25:00</div>
+
+  <div id="status">Ready</div>
+
+  <div>
+    <button id="startBtn">Start</button>
+    <button id="pauseBtn">Pause</button>
+    <button id="endBtn">End</button>
+  </div>
+
+  <div>
+    <button id="addBtn">+5 min</button>
+    <button id="subtractBtn">-5 min</button>
+  </div>
+
+  <script>
+    // =========================
+    // STATE
+    // =========================
+
+    let timeLeft = 25 * 60;
+    let timerInterval = null;
+    let isRunning = false;
+
+
+    // =========================
+    // ELEMENTS
+    // =========================
+
+    const timerDisplay = document.getElementById("timer");
+    const statusDisplay = document.getElementById("status");
+
+    const startBtn = document.getElementById("startBtn");
+    const pauseBtn = document.getElementById("pauseBtn");
+    const endBtn = document.getElementById("endBtn");
+
+    const addBtn = document.getElementById("addBtn");
+    const subtractBtn = document.getElementById("subtractBtn");
+
+
+    // =========================
+    // DISPLAY
+    // =========================
+
+    function updateDisplay() {
+      const minutes = Math.floor(timeLeft / 60);
+      const seconds = timeLeft % 60;
+
+      timerDisplay.textContent =
+        `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+    }
+
+
+    // =========================
+    // START
+    // =========================
+
+    function startTimer() {
+
+      if (isRunning) return;
+
+      isRunning = true;
+      statusDisplay.textContent = "Studying...";
+
+      timerInterval = setInterval(() => {
+
+        if (timeLeft <= 0) {
+          endSession();
+          return;
+        }
+
+        timeLeft--;
+
+        updateDisplay();
+
+      }, 1000);
+    }
+
+
+    // =========================
+    // PAUSE
+    // =========================
+
+    function pauseTimer() {
+
+      if (!isRunning) return;
+
+      clearInterval(timerInterval);
+
+      timerInterval = null;
+      isRunning = false;
+
+      statusDisplay.textContent = "Paused";
+    }
+
+
+    // =========================
+    // END
+    // =========================
+
+    function endSession() {
+
+      clearInterval(timerInterval);
+
+      timerInterval = null;
+      isRunning = false;
+
+      statusDisplay.textContent = "Session ended";
+
+      console.log("Study session ended.");
+    }
+
+
+    // =========================
+    // ADD TIME
+    // =========================
+
+    function addTime() {
+
+      timeLeft += 5 * 60;
+
+      updateDisplay();
+    }
+
+
+    // =========================
+    // SUBTRACT TIME
+    // =========================
+
+    function subtractTime() {
+
+      timeLeft -= 5 * 60;
+
+      if (timeLeft < 0) {
+        timeLeft = 0;
+      }
+
+      updateDisplay();
+    }
+
+
+    // =========================
+    // EVENTS
+    // =========================
+
+    startBtn.addEventListener("click", startTimer);
+
+    pauseBtn.addEventListener("click", pauseTimer);
+
+    endBtn.addEventListener("click", endSession);
+
+    addBtn.addEventListener("click", addTime);
+
+    subtractBtn.addEventListener("click", subtractTime);
+
+
+    // Initial display
+    updateDisplay();
+  </script>
+
+</body>
+</html>
